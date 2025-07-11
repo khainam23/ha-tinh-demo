@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đề án Tương tác: Hà Tĩnh SmartLife</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Slate Blue & Warm Sand -->
+    <!-- Application Structure Plan: Cấu trúc ứng dụng được thiết kế theo dạng một câu chuyện dẫn dắt nhà đầu tư, bắt đầu bằng "Tại sao là bây giờ?" (Cơ hội), tiếp đến là "Làm như thế nào?" (Giải pháp & Lợi thế), "Thị trường lớn đến đâu?" (Phân tích thị trường), "Kế hoạch là gì?" (Lộ trình & Tài chính), và "Ai sẽ thực hiện?" (Đội ngũ). Cấu trúc này phá vỡ cấu trúc tuyến tính của báo cáo gốc, ưu tiên sự rõ ràng và thuyết phục. Người dùng có thể điều hướng qua thanh điều hướng cố định hoặc cuộn trang để khám phá. Các yếu tố tương tác như nhấp để xem chi tiết module giúp trình bày thông tin phức tạp một cách gọn gàng, tránh làm người dùng bị quá tải. Lựa chọn này giúp nhà đầu tư nhanh chóng nắm bắt các luận điểm cốt lõi và đi sâu vào các phần họ quan tâm nhất. -->
+    <!-- Visualization & Content Choices: 
+        - Opportunity (GRDP, Tourism): Goal: Inform. Method: Big number cards (HTML/CSS) for immediate impact. Justification: Nhanh chóng thu hút sự chú ý vào các chỉ số tăng trưởng ấn tượng.
+        - Problem vs. Solution: Goal: Compare. Method: Two-column layout with icons (HTML/CSS). Justification: Trực quan hóa "nỗi đau" thị trường và giải pháp tương ứng một cách rõ ràng.
+        - 6 Modules Ecosystem: Goal: Organize/Explore. Method: Interactive grid (HTML/CSS/JS). Interaction: Click on a module to see its details in a modal. Justification: Trình bày một lượng lớn thông tin chi tiết về sản phẩm một cách gọn gàng, chỉ hiển thị khi người dùng yêu cầu.
+        - Use of Funds: Goal: Proportions. Method: Donut Chart (Chart.js). Justification: Cách trực quan và tiêu chuẩn để hiển thị phân bổ vốn.
+        - Market Size (TAM/SAM/SOM): Goal: Compare. Method: Bar Chart (Chart.js). Justification: So sánh quy mô các cấp độ thị trường một cách hiệu quả hơn bảng biểu tĩnh.
+        - GTM Strategy: Goal: Change/Process. Method: Phased timeline (HTML/CSS). Justification: Giúp người xem dễ dàng theo dõi trình tự và các hoạt động chính trong từng giai đoạn.
+        - Library/Method: TailwindCSS for styling, Chart.js for visualizations, Vanilla JS for interactivity. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background-color: #FDFCFB;
+            color: #4A4A4A;
+        }
+        .text-brand-primary { color: #2C3E50; }
+        .text-brand-secondary { color: #3498DB; }
+        .bg-brand-primary { background-color: #2C3E50; }
+        .bg-brand-secondary { background-color: #3498DB; }
+        .bg-brand-light { background-color: #ECF0F1; }
+        .border-brand-primary { border-color: #2C3E50; }
+        .shadow-brand { box-shadow: 0 10px 15px -3px rgba(44, 62, 80, 0.1), 0 4px 6px -2px rgba(44, 62, 80, 0.05); }
+        .card-hover { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .card-hover:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(44, 62, 80, 0.1), 0 10px 10px -5px rgba(44, 62, 80, 0.04); }
+        .chart-container { position: relative; width: 100%; max-width: 600px; margin-left: auto; margin-right: auto; height: 300px; max-height: 400px; }
+        @media (min-width: 768px) { .chart-container { height: 350px; } }
+        .modal {
+            transition: opacity 0.25s ease;
+        }
+        .modal-content {
+            transition: transform 0.25s ease;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header & Navigation -->
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-40 w-full border-b border-gray-200">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <a href="#hero" class="text-xl font-bold text-brand-primary">Hà Tĩnh <span class="text-brand-secondary">SmartLife</span></a>
+                <nav class="hidden md:flex space-x-6 text-sm font-medium">
+                    <a href="#opportunity" class="text-gray-600 hover:text-brand-secondary">Cơ hội</a>
+                    <a href="#solution" class="text-gray-600 hover:text-brand-secondary">Giải pháp</a>
+                    <a href="#market" class="text-gray-600 hover:text-brand-secondary">Thị trường</a>
+                    <a href="#strategy" class="text-gray-600 hover:text-brand-secondary">Chiến lược</a>
+                    <a href="#financials" class="text-gray-600 hover:text-brand-secondary">Tài chính</a>
+                    <a href="#team" class="text-gray-600 hover:text-brand-secondary">Đội ngũ</a>
+                </nav>
+                <button id="mobile-menu-button" class="md:hidden p-2 rounded-md text-gray-600 hover:bg-gray-100">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+        </div>
+         <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-200">
+            <a href="#opportunity" class="block py-2 px-4 text-sm text-gray-600 hover:bg-gray-50">Cơ hội</a>
+            <a href="#solution" class="block py-2 px-4 text-sm text-gray-600 hover:bg-gray-50">Giải pháp</a>
+            <a href="#market" class="block py-2 px-4 text-sm text-gray-600 hover:bg-gray-50">Thị trường</a>
+            <a href="#strategy" class="block py-2 px-4 text-sm text-gray-600 hover:bg-gray-50">Chiến lược</a>
+            <a href="#financials" class="block py-2 px-4 text-sm text-gray-600 hover:bg-gray-50">Tài chính</a>
+            <a href="#team" class="block py-2 px-4 text-sm text-gray-600 hover:bg-gray-50">Đội ngũ</a>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section id="hero" class="py-20 md:py-28 bg-white">
+            <div class="container mx-auto px-4 text-center">
+                <h1 class="text-4xl md:text-6xl font-bold text-brand-primary leading-tight">Đầu tư vào Tương lai Số của Hà Tĩnh</h1>
+                <p class="mt-4 md:mt-6 text-lg md:text-xl max-w-3xl mx-auto text-gray-600">Xây dựng Hà Tĩnh SmartLife - Siêu ứng dụng "tất cả trong một", khai phá tiềm năng kinh tế dịch vụ và nâng cao chất lượng sống tại một trong những tỉnh phát triển năng động nhất Việt Nam.</p>
+                <div class="mt-8 md:mt-12 flex justify-center">
+                    <a href="#opportunity" class="bg-brand-secondary text-white font-semibold py-3 px-8 rounded-lg shadow-lg hover:bg-opacity-90 transition-transform transform hover:scale-105">Khám phá Cơ hội</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Opportunity Section -->
+        <section id="opportunity" class="py-16 md:py-24">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-brand-primary">Cơ hội Vàng tại một Thị trường Năng động</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-gray-600">Hà Tĩnh đang trải qua một giai đoạn tăng trưởng kép ngoạn mục về kinh tế và du lịch, nhưng nền kinh tế dịch vụ lại phân mảnh và chưa được số hóa, tạo ra một khoảng trống thị trường rõ rệt.</p>
+                </div>
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <!-- Card 1: GRDP Growth -->
+                    <div class="bg-white p-6 rounded-xl shadow-brand card-hover">
+                        <div class="flex items-center">
+                            <div class="bg-blue-100 text-brand-secondary p-3 rounded-full">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                            </div>
+                            <h3 class="ml-4 font-semibold text-brand-primary">Tăng trưởng GRDP</h3>
+                        </div>
+                        <p class="text-4xl font-bold text-brand-secondary mt-4">7,48%</p>
+                        <p class="text-sm text-gray-500 mt-2">Năm 2024, thuộc nhóm đầu cả nước, thể hiện sức sống kinh tế nội tại mạnh mẽ.</p>
+                    </div>
+                    <!-- Card 2: Tourism Boom -->
+                    <div class="bg-white p-6 rounded-xl shadow-brand card-hover">
+                         <div class="flex items-center">
+                            <div class="bg-green-100 text-green-600 p-3 rounded-full">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            </div>
+                            <h3 class="ml-4 font-semibold text-brand-primary">Bùng nổ Du lịch</h3>
+                        </div>
+                        <p class="text-4xl font-bold text-green-600 mt-4">~5,7Tr</p>
+                        <p class="text-sm text-gray-500 mt-2">Lượt khách dự kiến năm 2024, tạo ra dòng cầu khổng lồ cho các dịch vụ phụ trợ.</p>
+                    </div>
+                     <!-- Card 3: Fragmented Market -->
+                    <div class="bg-white p-6 rounded-xl shadow-brand card-hover">
+                        <div class="flex items-center">
+                            <div class="bg-yellow-100 text-yellow-600 p-3 rounded-full">
+                               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12s-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.368a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path></svg>
+                            </div>
+                            <h3 class="ml-4 font-semibold text-brand-primary">Thị trường Phân mảnh</h3>
+                        </div>
+                         <p class="text-4xl font-bold text-yellow-600 mt-4">1000+</p>
+                        <p class="text-sm text-gray-500 mt-2">Doanh nghiệp dịch vụ (taxi, nhà hàng, khách sạn) hoạt động độc lập, kém hiệu quả.</p>
+                    </div>
+                     <!-- Card 4: Digital Gap -->
+                    <div class="bg-white p-6 rounded-xl shadow-brand card-hover">
+                        <div class="flex items-center">
+                            <div class="bg-red-100 text-red-600 p-3 rounded-full">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            </div>
+                            <h3 class="ml-4 font-semibold text-brand-primary">Khoảng trống Số hóa</h3>
+                        </div>
+                        <p class="text-4xl font-bold text-red-600 mt-4">Bỏ ngỏ</p>
+                        <p class="text-sm text-gray-500 mt-2">Các "ông lớn" quốc gia chưa thâm nhập sâu, tạo cơ hội vàng cho một giải pháp siêu địa phương.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Solution Section -->
+        <section id="solution" class="py-16 md:py-24 bg-white">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-brand-primary">Giải pháp Toàn diện: Hệ sinh thái SmartLife</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-gray-600">Chúng tôi không chỉ xây dựng một ứng dụng, mà là một hạ tầng số tích hợp 6 module dịch vụ thiết yếu, kết nối các mảnh ghép rời rạc của nền kinh tế vào một thể thống nhất. Hãy nhấp vào từng module để khám phá.</p>
+                </div>
+                
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6 text-center">
+                    <!-- Module Icons -->
+                    <div class="module-card" data-module="move">
+                        <div class="bg-white p-6 rounded-xl shadow-brand card-hover cursor-pointer border-2 border-transparent hover:border-brand-secondary">
+                            <span class="text-4xl">🚕</span>
+                            <h3 class="mt-4 font-semibold text-brand-primary">SmartMove</h3>
+                            <p class="text-xs text-gray-500">Vận tải</p>
+                        </div>
+                    </div>
+                    <div class="module-card" data-module="delivery">
+                        <div class="bg-white p-6 rounded-xl shadow-brand card-hover cursor-pointer border-2 border-transparent hover:border-brand-secondary">
+                            <span class="text-4xl">🍔</span>
+                            <h3 class="mt-4 font-semibold text-brand-primary">SmartDelivery</h3>
+                             <p class="text-xs text-gray-500">Giao hàng</p>
+                        </div>
+                    </div>
+                    <div class="module-card" data-module="stay">
+                        <div class="bg-white p-6 rounded-xl shadow-brand card-hover cursor-pointer border-2 border-transparent hover:border-brand-secondary">
+                            <span class="text-4xl">🏨</span>
+                            <h3 class="mt-4 font-semibold text-brand-primary">SmartStay</h3>
+                             <p class="text-xs text-gray-500">Lưu trú</p>
+                        </div>
+                    </div>
+                    <div class="module-card" data-module="ocop">
+                        <div class="bg-white p-6 rounded-xl shadow-brand card-hover cursor-pointer border-2 border-transparent hover:border-brand-secondary">
+                            <span class="text-4xl">🎁</span>
+                            <h3 class="mt-4 font-semibold text-brand-primary">SmartOCOP</h3>
+                             <p class="text-xs text-gray-500">Sản phẩm địa phương</p>
+                        </div>
+                    </div>
+                    <div class="module-card" data-module="home">
+                        <div class="bg-white p-6 rounded-xl shadow-brand card-hover cursor-pointer border-2 border-transparent hover:border-brand-secondary">
+                           <span class="text-4xl">🛠️</span>
+                            <h3 class="mt-4 font-semibold text-brand-primary">SmartHome</h3>
+                             <p class="text-xs text-gray-500">Dịch vụ tại nhà</p>
+                        </div>
+                    </div>
+                    <div class="module-card" data-module="travel">
+                        <div class="bg-white p-6 rounded-xl shadow-brand card-hover cursor-pointer border-2 border-transparent hover:border-brand-secondary">
+                           <span class="text-4xl">🗺️</span>
+                            <h3 class="mt-4 font-semibold text-brand-primary">SmartTravel</h3>
+                             <p class="text-xs text-gray-500">Du lịch</p>
+                        </div>
+                    </div>
+                </div>
+
+                 <!-- Competitive Moat -->
+                <div class="mt-20">
+                    <div class="text-center mb-12">
+                        <h3 class="text-2xl md:text-3xl font-bold text-brand-primary">Lợi thế Cạnh tranh Bền vững</h3>
+                        <p class="mt-3 max-w-2xl mx-auto text-gray-600">Thành công của dự án được bảo vệ bởi một "hào sâu kinh tế" không thể sao chép.</p>
+                    </div>
+                    <div class="grid md:grid-cols-3 gap-8 text-center">
+                        <div class="bg-white p-6 rounded-lg">
+                            <div class="text-4xl mb-4">🤝</div>
+                            <h4 class="font-bold text-lg text-brand-primary">Hợp tác Công-Tư Độc quyền</h4>
+                            <p class="text-sm text-gray-600 mt-2">Sự bảo trợ từ UBND tỉnh giúp giảm chi phí, tăng uy tín và tạo rào cản pháp lý mà đối thủ không thể vượt qua.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg">
+                            <div class="text-4xl mb-4">📍</div>
+                            <h4 class="font-bold text-lg text-brand-primary">Tập trung Siêu địa phương</h4>
+                            <p class="text-sm text-gray-600 mt-2">Thấu hiểu sâu sắc văn hóa và hành vi tiêu dùng bản địa, tùy chỉnh sản phẩm phù hợp tuyệt đối với thị trường Hà Tĩnh.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg">
+                            <div class="text-4xl mb-4">🔗</div>
+                            <h4 class="font-bold text-lg text-brand-primary">Hiệu ứng Mạng lưới</h4>
+                            <p class="text-sm text-gray-600 mt-2">Mô hình tích hợp tạo ra vòng lặp tăng trưởng tự củng cố, nhiều người dùng hơn thu hút nhiều đối tác hơn và ngược lại.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Market Section -->
+        <section id="market" class="py-16 md:py-24">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-brand-primary">Quy mô Thị trường Tiềm năng</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-gray-600">Phân tích thị trường cho thấy một cơ hội đủ lớn để xây dựng một doanh nghiệp bền vững, với mục tiêu chiếm lĩnh một phần đáng kể của thị trường khả dụng qua kênh số.</p>
+                </div>
+                 <div class="bg-white p-6 md:p-8 rounded-xl shadow-brand">
+                    <div class="chart-container">
+                        <canvas id="marketSizeChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Strategy Section -->
+        <section id="strategy" class="py-16 md:py-24 bg-white">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-brand-primary">Chiến lược Tiếp cận Thị trường</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-gray-600">Chúng tôi áp dụng chiến lược hai giai đoạn để giải quyết bài toán "con gà và quả trứng", tận dụng lợi thế hợp tác công-tư để tăng trưởng hiệu quả với chi phí thấp.</p>
+                </div>
+                
+                <div class="relative">
+                    <!-- The connecting line -->
+                    <div class="hidden md:block absolute top-5 left-1/2 w-0.5 h-full bg-brand-light"></div>
+
+                    <!-- Phase 1 -->
+                    <div class="md:grid md:grid-cols-2 md:gap-8 items-center mb-16">
+                        <div class="text-center md:text-right md:pr-8 mb-4 md:mb-0">
+                            <div class="bg-brand-secondary text-white w-20 h-20 rounded-full flex items-center justify-center text-2xl font-bold mx-auto md:ml-auto md:mr-0">GĐ 1</div>
+                        </div>
+                        <div>
+                            <div class="bg-white p-6 rounded-xl shadow-brand card-hover border-l-4 border-brand-secondary">
+                                <p class="text-sm text-brand-secondary font-semibold">0 - 3 THÁNG</p>
+                                <h3 class="text-xl font-bold text-brand-primary mt-1">Khởi động Nguồn cung ("Supply is King")</h3>
+                                <ul class="mt-3 text-gray-600 text-sm space-y-2 list-disc list-inside">
+                                    <li>Ký kết hợp tác chiến lược với các hãng taxi, hiệp hội vận tải.</li>
+                                    <li>Tổ chức hội thảo, phối hợp với các Sở, ban, ngành để thu hút đối tác SME.</li>
+                                    <li>Huy động Tổ chuyển đổi số cộng đồng để tiếp cận hộ kinh doanh nhỏ lẻ.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                     <!-- Phase 2 -->
+                    <div class="md:grid md:grid-cols-2 md:gap-8 items-center">
+                        <div class="md:order-2 text-center md:text-left md:pl-8 mb-4 md:mb-0">
+                           <div class="bg-brand-primary text-white w-20 h-20 rounded-full flex items-center justify-center text-2xl font-bold mx-auto md:mr-auto md:ml-0">GĐ 2</div>
+                        </div>
+                        <div class="md:order-1 md:text-right">
+                            <div class="bg-white p-6 rounded-xl shadow-brand card-hover border-r-4 border-brand-primary md:border-r-0 md:border-l-4">
+                                <p class="text-sm text-brand-primary font-semibold">3 - 12 THÁNG</p>
+                                <h3 class="text-xl font-bold text-brand-primary mt-1">Kích hoạt Nguồn cầu ("Demand Ignition")</h3>
+                                <ul class="mt-3 text-gray-600 text-sm space-y-2 list-disc list-inside">
+                                    <li>Truyền thông bảo trợ qua các kênh báo, đài chính thống của tỉnh.</li>
+                                    <li>Chạy quảng cáo số siêu địa phương trên Facebook, Google, TikTok.</li>
+                                    <li>Tung khuyến mãi hấp dẫn và hợp tác với KOLs/Influencers địa phương.</li>
+                                    <li>Tích hợp mã QR tải app tại các khách sạn, nhà hàng, điểm du lịch.</li>
+                                 </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- Financials Section -->
+        <section id="financials" class="py-16 md:py-24">
+            <div class="container mx-auto px-4">
+                 <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-brand-primary">Kêu gọi Vốn & Phân bổ Nguồn lực</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-gray-600">Chúng tôi đang tìm kiếm khoản đầu tư vòng Hạt giống để hiện thực hóa tầm nhìn. Nguồn vốn sẽ được phân bổ một cách chiến lược để xây dựng sản phẩm và nhanh chóng chiếm lĩnh thị trường.</p>
+                </div>
+                <div class="grid lg:grid-cols-5 gap-8 items-center">
+                    <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-brand card-hover">
+                        <h3 class="font-bold text-xl text-brand-primary mb-4 text-center">Chi tiết Vòng Hạt giống</h3>
+                        <div class="space-y-4 text-gray-700">
+                             <div class="flex justify-between items-center border-b pb-2">
+                                <span class="font-semibold">Số vốn Kêu gọi:</span>
+                                <span class="font-bold text-brand-secondary text-lg">...</span>
+                            </div>
+                            <div class="flex justify-between items-center border-b pb-2">
+                                <span class="font-semibold">Cổ phần Chào bán:</span>
+                                <span class="font-bold text-brand-secondary text-lg">...</span>
+                            </div>
+                             <div class="flex justify-between items-center border-b pb-2">
+                                <span class="font-semibold">Định giá Trước gọi vốn:</span>
+                                <span class="font-bold text-brand-secondary text-lg">...</span>
+                            </div>
+                             <div class="bg-blue-50 p-4 rounded-lg mt-4">
+                                <p class="font-bold text-center text-brand-primary">Mục tiêu quan trọng</p>
+                                <p class="text-center text-sm text-gray-600 mt-1">Đạt điểm hòa vốn EBITDA vào cuối Năm 2.</p>
+                             </div>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-3 bg-white p-6 md:p-8 rounded-xl shadow-brand">
+                        <h3 class="font-bold text-xl text-brand-primary mb-4 text-center">Kế hoạch Sử dụng Vốn</h3>
+                        <div class="chart-container h-64 md:h-72">
+                            <canvas id="useOfFundsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Team Section -->
+        <section id="team" class="py-16 md:py-24 bg-white">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-brand-primary">Đội ngũ Sáng lập "Tam giác Chiến lược"</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-gray-600">Sự kết hợp hoàn hảo giữa năng lực quan hệ địa phương, chuyên môn công nghệ và kinh nghiệm vận hành để đảm bảo khả năng thực thi thành công.</p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="bg-white p-8 rounded-xl shadow-brand card-hover text-center">
+                        <div class="w-24 h-24 rounded-full bg-brand-light mx-auto flex items-center justify-center text-4xl">👨‍💼</div>
+                        <h3 class="mt-4 text-xl font-bold text-brand-primary">Giám đốc Điều hành (CEO)</h3>
+                        <p class="mt-1 text-sm text-brand-secondary font-semibold">Nhà Kết nối Địa phương</p>
+                        <p class="mt-3 text-sm text-gray-600">Dẫn dắt tầm nhìn chiến lược và phát triển lợi thế hợp tác công-tư độc quyền.</p>
+                    </div>
+                     <div class="bg-white p-8 rounded-xl shadow-brand card-hover text-center">
+                        <div class="w-24 h-24 rounded-full bg-brand-light mx-auto flex items-center justify-center text-4xl">👩‍💻</div>
+                        <h3 class="mt-4 text-xl font-bold text-brand-primary">Giám đốc Công nghệ (CTO)</h3>
+                        <p class="mt-1 text-sm text-brand-secondary font-semibold">Kiến trúc sư Mở rộng</p>
+                        <p class="mt-3 text-sm text-gray-600">Xây dựng nền tảng công nghệ vững chắc, có khả năng mở rộng và chịu tải cao.</p>
+                    </div>
+                     <div class="bg-white p-8 rounded-xl shadow-brand card-hover text-center">
+                        <div class="w-24 h-24 rounded-full bg-brand-light mx-auto flex items-center justify-center text-4xl">🧑‍🚀</div>
+                        <h3 class="mt-4 text-xl font-bold text-brand-primary">Giám đốc Vận hành (COO)</h3>
+                        <p class="mt-1 text-sm text-brand-secondary font-semibold">Chuyên gia Thực thi</p>
+                        <p class="mt-3 text-sm text-gray-600">Tối ưu hóa quy trình, đảm bảo chất lượng dịch vụ và triển khai chiến lược tiếp cận thị trường.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-brand-primary text-white">
+        <div class="container mx-auto px-4 py-8 text-center">
+            <p class="font-bold text-lg">Hà Tĩnh SmartLife</p>
+            <p class="text-sm mt-2 text-gray-300">Đầu tư hôm nay, kiến tạo tương lai số cho Hà Tĩnh.</p>
+            <p class="text-xs mt-4 text-gray-400">&copy; 2025 Công ty Cổ phần Công nghệ Hà Tĩnh SmartLife. All Rights Reserved.</p>
+        </div>
+    </footer>
+    
+    <!-- Modal -->
+    <div id="module-modal" class="modal fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 p-4 opacity-0 pointer-events-none">
+        <div id="modal-content" class="modal-content bg-white w-full max-w-lg rounded-xl shadow-2xl p-6 md:p-8 transform scale-95">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 id="modal-title" class="text-2xl font-bold text-brand-primary"></h3>
+                <button id="close-modal" class="text-gray-400 hover:text-red-500">&times;</button>
+            </div>
+            <div class="mt-4">
+                <p class="font-semibold text-brand-secondary">Điểm độc đáo (USP):</p>
+                <p id="modal-usp" class="mt-1 text-gray-600"></p>
+                <p class="font-semibold text-brand-secondary mt-4">Mô tả:</p>
+                <p id="modal-description" class="mt-1 text-gray-600"></p>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Mobile Menu Toggle
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            // Smooth scroll for nav links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                     if (mobileMenu.classList.contains('hidden') === false) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                });
+            });
+
+            // Chart.js: Market Size Chart
+            const marketSizeCtx = document.getElementById('marketSizeChart').getContext('2d');
+            new Chart(marketSizeCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Tổng Thị trường (TAM)', 'Thị trường Khả dụng (SAM)', 'Thị trường Đạt được (SOM)'],
+                    datasets: [{
+                        label: 'Quy mô thị trường (ước tính)',
+                        data: [100, 75, 15], 
+                        backgroundColor: [
+                            'rgba(236, 240, 241, 0.8)',
+                            'rgba(52, 152, 219, 0.6)',
+                            'rgba(44, 62, 80, 0.8)'
+                        ],
+                        borderColor: [
+                             '#BDC3C7',
+                             '#3498DB',
+                             '#2C3E50'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `Tỷ lệ ước tính: ${context.raw}%`;
+                                }
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Phân tích Quy mô Thị trường (TAM, SAM, SOM)',
+                            font: { size: 16, family: 'Be Vietnam Pro' },
+                            color: '#2C3E50',
+                            padding: { bottom: 20 }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) { return value + '%' }
+                            }
+                        },
+                        x: {
+                           ticks: {
+                                font: { size: 11 }
+                           }
+                        }
+                    }
+                }
+            });
+
+            // Chart.js: Use of Funds Chart
+            const useOfFundsCtx = document.getElementById('useOfFundsChart').getContext('2d');
+            new Chart(useOfFundsCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Phát triển Sản phẩm', 'Marketing & Bán hàng', 'Vận hành & QL chung', 'Dự phòng'],
+                    datasets: [{
+                        data: [40, 35, 15, 10],
+                        backgroundColor: ['#2C3E50', '#3498DB', '#95A5A6', '#ECF0F1'],
+                        borderColor: '#FFFFFF',
+                        borderWidth: 3,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '60%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: {
+                                    family: 'Be Vietnam Pro',
+                                    size: 12
+                                },
+                                padding: 15
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed !== null) {
+                                        label += context.parsed + '%';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Modal Logic
+            const modalData = {
+                move: {
+                    title: '🚕 SmartMove',
+                    usp: 'Hợp tác chiến lược với các hãng taxi truyền thống.',
+                    description: 'Thay vì cạnh tranh, SmartLife hợp tác để ngay lập tức tạo ra đội xe lớn nhất, phủ rộng nhất và đáng tin cậy nhất. Giải quyết triệt để vấn đề "xe dù, giá ảo" thông qua việc niêm yết giá minh bạch và theo dõi hành trình trên ứng dụng.'
+                },
+                delivery: {
+                    title: '🍔 SmartDelivery',
+                    usp: 'Tích hợp sâu rộng với hệ sinh thái ẩm thực và đặc sản địa phương.',
+                    description: 'Phủ sóng cả những quán ăn, nhà hàng mà các nền tảng quốc gia thường bỏ qua. Kết nối trực tiếp với module SmartOCOP, tạo kênh phân phối hiện đại cho đặc sản tỉnh nhà như kẹo cu đơ, nước mắm Cửa Sót.'
+                },
+                stay: {
+                    title: '🏨 SmartStay',
+                    usp: 'Cổng thông tin lưu trú chính thức, đáng tin cậy nhất.',
+                    description: 'Nhờ sự bảo trợ dữ liệu từ Sở VHTTDL, nền tảng cung cấp thông tin xác thực, hình ảnh chất lượng và tour tham quan ảo 360 độ, cho phép du khách "tham quan" khách sạn từ xa trước khi đặt phòng.'
+                },
+                ocop: {
+                    title: '🎁 SmartOCOP',
+                    usp: 'Xây dựng "lớp lá chắn tin cậy" cho đặc sản địa phương.',
+                    description: 'Mỗi sản phẩm trên nền tảng được phối hợp kiểm định chất lượng cùng Sở Công Thương và có mã QR truy xuất nguồn gốc, giải quyết triệt để vấn đề hàng giả, hàng kém chất lượng.'
+                },
+                home: {
+                    title: '🛠️ SmartHome',
+                    usp: 'Tập trung vào sự an toàn và chuyên nghiệp.',
+                    description: 'Kết nối các dịch vụ giúp việc, sửa chữa... với các đối tác được xác minh danh tính và lý lịch. Nền tảng tích hợp bảo hiểm trách nhiệm cho mỗi giao dịch để đảm bảo an toàn tuyệt đối cho người dùng.'
+                },
+                travel: {
+                    title: '🗺️ SmartTravel',
+                    usp: 'Trợ lý du lịch cá nhân hóa bằng AI.',
+                    description: 'Dựa trên dữ liệu chính thống, AI sẽ phân tích sở thích của du khách để tự động tạo ra các lịch trình khám phá độc đáo, phù hợp nhất với từng cá nhân, từ tham quan chùa Hương Tích đến khu di tích Nguyễn Du.'
+                }
+            };
+            
+            const modal = document.getElementById('module-modal');
+            const modalContent = document.getElementById('modal-content');
+            const closeModalButton = document.getElementById('close-modal');
+            const moduleCards = document.querySelectorAll('.module-card');
+            
+            const openModal = (moduleKey) => {
+                const data = modalData[moduleKey];
+                document.getElementById('modal-title').innerText = data.title;
+                document.getElementById('modal-usp').innerText = data.usp;
+                document.getElementById('modal-description').innerText = data.description;
+                
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+                modalContent.classList.remove('scale-95');
+            };
+            
+            const closeModal = () => {
+                modal.classList.add('opacity-0', 'pointer-events-none');
+                modalContent.classList.add('scale-95');
+            };
+
+            moduleCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    openModal(card.dataset.module);
+                });
+            });
+            
+            closeModalButton.addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+             document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    closeModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
